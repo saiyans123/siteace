@@ -9,7 +9,7 @@ if (Meteor.isClient) {
 	// helper function that returns all available websites
 	Template.website_list.helpers({
 		websites:function(){
-			return Websites.find({});
+			return Websites.find({}, {sort:{vote: -1}});
 		}
 	});
 
@@ -23,8 +23,10 @@ if (Meteor.isClient) {
 			// example of how you can access the id for the website in the database
 			// (this is the data context for the template)
 			var website_id = this._id;
-			console.log("Up voting website with id "+website_id);
+			
 			// put the code in here to add a vote to a website!
+			Websites.update({_id:website_id}, 
+								{ $inc: { vote: 1 } });
 
 			return false;// prevent the button from reloading the page
 		}, 
@@ -33,10 +35,12 @@ if (Meteor.isClient) {
 			// example of how you can access the id for the website in the database
 			// (this is the data context for the template)
 			var website_id = this._id;
-			console.log("Down voting website with id "+website_id);
+			
 
 			// put the code in here to remove a vote from a website!
-
+			Websites.update({_id:website_id}, 
+								{ $inc: { vote: -1 } });
+								
 			return false;// prevent the button from reloading the page
 		}
 	})
@@ -51,6 +55,8 @@ if (Meteor.isClient) {
 			var url = event.target.url.value;
 			var title = event.target.title.value;
 			var description = event.target.description.value;
+			
+			//  put your website saving code in here!	
 			if (url && description)
 			{
 				Websites.insert({
@@ -66,9 +72,6 @@ if (Meteor.isClient) {
 				alert("URL or description can't be empty");
 			}
 			
-			//  put your website saving code in here!	
-			
-	    	
 			return false;// stop the form submit from reloading the page
 
 		}
